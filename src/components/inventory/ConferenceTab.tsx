@@ -17,14 +17,14 @@ import {
   Camera,
   Plus,
   Trash2,
-  Loader2, // <-- Ícone de loading importado
+  Loader2,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import type { Product, ProductCount } from "@/lib/types";
 import { BarcodeScanner } from "@/components/features/barcode-scanner";
 
 interface ConferenceTabProps {
-  isLoading: boolean; // <-- Nova propriedade
+  isLoading: boolean;
   countingMode: "loja" | "estoque";
   setCountingMode: (mode: "loja" | "estoque") => void;
   scanInput: string;
@@ -33,7 +33,7 @@ interface ConferenceTabProps {
   isCameraViewActive: boolean;
   setIsCameraViewActive: (show: boolean) => void;
   handleBarcodeScanned: (barcode: string) => void;
-  currentProduct: Product | null; // <-- Simplificado, não há mais TempProduct
+  currentProduct: Product | null;
   quantityInput: string;
   setQuantityInput: (value: string) => void;
   handleQuantityKeyPress: (e: React.KeyboardEvent<HTMLInputElement>) => void;
@@ -43,6 +43,7 @@ interface ConferenceTabProps {
   handleSaveCount: () => void;
 }
 
+// --- COMPONENTE VISUAL SIMPLIFICADO ---
 const ProductCountItem = ({
   item,
   onRemove,
@@ -54,7 +55,7 @@ const ProductCountItem = ({
     <div className="flex-1">
       <p className="font-medium text-sm">{item.descricao}</p>
       <p className="text-xs text-gray-600 dark:text-gray-400">
-        Cód. Barras: {item.codigo_de_barras} | Sistema: {item.saldo_estoque}
+        Cód. Barras: {item.codigo_de_barras}
       </p>
       <div className="flex items-center space-x-2 mt-1">
         <Badge variant="outline" className="text-xs">
@@ -62,19 +63,6 @@ const ProductCountItem = ({
         </Badge>
         <Badge variant="outline" className="text-xs">
           Estoque: {item.quant_estoque}
-        </Badge>
-        <Badge
-          variant={
-            item.total === 0
-              ? "secondary"
-              : item.total > 0
-              ? "default"
-              : "destructive"
-          }
-          className="text-xs"
-        >
-          Total: {item.total > 0 ? "+" : ""}
-          {item.total}
         </Badge>
       </div>
     </div>
@@ -161,9 +149,8 @@ export const ConferenceTab: React.FC<ConferenceTabProps> = ({
                     placeholder="Digite ou escaneie o código"
                     className="flex-1 mobile-optimized"
                     onKeyPress={(e) => e.key === "Enter" && handleScan()}
-                    disabled={isLoading} // <-- ALTERAÇÃO AQUI
+                    disabled={isLoading}
                   />
-                  {/* --- ALTERAÇÃO AQUI: Lógica de Loading no botão --- */}
                   <Button
                     onClick={handleScan}
                     disabled={isLoading}
@@ -198,9 +185,7 @@ export const ConferenceTab: React.FC<ConferenceTabProps> = ({
                         Cód. Interno: {currentProduct.codigo_produto}
                       </p>
                     </div>
-                    <Badge variant="secondary" className="ml-2">
-                      Estoque: {currentProduct.saldo_estoque.toString()}
-                    </Badge>
+                    {/* Badge de saldo de estoque removido */}
                   </div>
                 </div>
               )}
@@ -212,13 +197,13 @@ export const ConferenceTab: React.FC<ConferenceTabProps> = ({
                 <Input
                   id="quantity"
                   type="text"
-                  inputMode="decimal" // Melhora a experiência em teclados mobile
+                  inputMode="decimal"
                   value={quantityInput}
                   onChange={(e) => setQuantityInput(e.target.value)}
                   onKeyPress={handleQuantityKeyPress}
                   placeholder="Qtd ou expressão (ex: 24+24)"
                   className="mobile-optimized font-mono"
-                  disabled={!currentProduct} // Só habilita se um produto for encontrado
+                  disabled={!currentProduct}
                 />
               </div>
               <Button
@@ -246,17 +231,15 @@ export const ConferenceTab: React.FC<ConferenceTabProps> = ({
                 <p className="text-sm">Escaneie um código para começar</p>
               </div>
             ) : (
-              [...productCounts].reverse().map(
-                (
-                  item // Mostra o mais recente primeiro
-                ) => (
+              [...productCounts]
+                .reverse()
+                .map((item) => (
                   <ProductCountItem
                     key={item.id}
                     item={item}
                     onRemove={handleRemoveCount}
                   />
-                )
-              )
+                ))
             )}
           </div>
         </CardContent>

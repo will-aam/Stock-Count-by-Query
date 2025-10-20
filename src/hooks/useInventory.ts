@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { toast } from "@/hooks/use-toast";
-import * as Papa from "papaparse";
+import * as Papa from "paparse";
 import type { Product, ProductCount } from "@/lib/types";
 
 const loadCountsFromLocalStorage = (userId: number | null): ProductCount[] => {
@@ -22,20 +22,17 @@ export const useInventory = ({ userId }: { userId: number | null }) => {
   const [scanInput, setScanInput] = useState("");
   const [quantityInput, setQuantityInput] = useState("");
   const [currentProduct, setCurrentProduct] = useState<Product | null>(null);
-  const [isLoading, setIsLoading] = useState(false); // Para feedback de busca na API
+  const [isLoading, setIsLoading] = useState(false);
   const [countingMode, setCountingMode] = useState<"loja" | "estoque">("loja");
   const [productCounts, setProductCounts] = useState<ProductCount[]>([]);
   const [showClearDataModal, setShowClearDataModal] = useState(false);
   const [isCameraViewActive, setIsCameraViewActive] = useState(false);
   const [history, setHistory] = useState<any[]>([]);
-  const [showMissingItemsModal, setShowMissingItemsModal] = useState(false); // Manteremos o estado, mas a lógica de itens será ajustada
 
-  // Carrega contagens salvas no localStorage ao iniciar
   useEffect(() => {
     setProductCounts(loadCountsFromLocalStorage(userId));
   }, [userId]);
 
-  // Salva contagens no localStorage sempre que elas mudam
   useEffect(() => {
     if (userId) {
       localStorage.setItem(
@@ -45,7 +42,6 @@ export const useInventory = ({ userId }: { userId: number | null }) => {
     }
   }, [productCounts, userId]);
 
-  // --- FUNÇÃO DE BUSCA MODIFICADA ---
   const handleScan = useCallback(async () => {
     if (scanInput.trim() === "" || !userId) return;
 
@@ -137,22 +133,16 @@ export const useInventory = ({ userId }: { userId: number | null }) => {
         if (countingMode === "loja") existingItem.quant_loja += finalQuantity;
         else existingItem.quant_estoque += finalQuantity;
 
-        existingItem.total =
-          existingItem.quant_loja +
-          existingItem.quant_estoque -
-          existingItem.saldo_estoque;
         updatedCounts[existingIndex] = existingItem;
         return updatedCounts;
       } else {
         const newCount: ProductCount = {
           id: Date.now(),
-          codigo_de_barras: scanInput, // Usa o código que foi lido
+          codigo_de_barras: scanInput,
           codigo_produto: currentProduct.codigo_produto,
           descricao: currentProduct.descricao,
-          saldo_estoque: Number(currentProduct.saldo_estoque),
           quant_loja: countingMode === "loja" ? finalQuantity : 0,
           quant_estoque: countingMode === "estoque" ? finalQuantity : 0,
-          total: finalQuantity - Number(currentProduct.saldo_estoque),
           local_estoque: "",
           data_hora: new Date().toISOString(),
         };
@@ -176,7 +166,6 @@ export const useInventory = ({ userId }: { userId: number | null }) => {
     if (!userId) return;
     setProductCounts([]);
     localStorage.removeItem(`productCounts-${userId}`);
-    // Não precisa mais apagar dados do servidor, pois o catálogo é permanente.
     setShowClearDataModal(false);
     toast({
       title: "Sucesso!",
@@ -192,7 +181,6 @@ export const useInventory = ({ userId }: { userId: number | null }) => {
   const handleBarcodeScanned = useCallback((barcode: string) => {
     setIsCameraViewActive(false);
     setScanInput(barcode);
-    // Pequeno delay para o usuário ver que o campo foi preenchido antes da busca iniciar
     setTimeout(() => {
       document.getElementById("scan-button")?.click();
     }, 100);
@@ -261,16 +249,13 @@ export const useInventory = ({ userId }: { userId: number | null }) => {
     [userId]
   );
 
-  // As funções de exportar e salvar agora trabalham apenas com os itens contados
   const generateReportData = useCallback(() => {
     return productCounts.map((item) => ({
       codigo_de_barras: item.codigo_de_barras,
       codigo_produto: item.codigo_produto,
       descricao: item.descricao,
-      saldo_estoque: item.saldo_estoque,
       quant_loja: item.quant_loja,
       quant_estoque: item.quant_estoque,
-      total: item.total,
     }));
   }, [productCounts]);
 
@@ -363,8 +348,5 @@ export const useInventory = ({ userId }: { userId: number | null }) => {
     loadHistory,
     handleSaveCount,
     handleDeleteHistoryItem,
-    showMissingItemsModal, // Ainda aqui, mas o conteúdo será vazio
-    setShowMissingItemsModal,
-    missingItems: [], // Retorna sempre um array vazio
   };
 };
