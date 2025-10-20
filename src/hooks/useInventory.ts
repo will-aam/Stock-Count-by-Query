@@ -1,9 +1,9 @@
 "use client";
 
 import { useState, useEffect, useMemo, useCallback } from "react";
-import { toast } from "@/src/hooks/use-toast";
+import { toast } from "@/hooks/use-toast";
 import * as Papa from "papaparse";
-import type { Product, ProductCount } from "@/src/lib/types";
+import type { Product, ProductCount } from "@/lib/types";
 
 const loadCountsFromLocalStorage = (userId: number | null): ProductCount[] => {
   if (typeof window === "undefined" || !userId) {

@@ -5,10 +5,10 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/src/components/ui/card";
-import { Button } from "@/src/components/ui/button";
-import { Input } from "@/src/components/ui/input";
-import { Label } from "@/src/components/ui/label";
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   CloudUpload,
   Scan,
@@ -19,9 +19,9 @@ import {
   Trash2,
   Loader2, // <-- Ícone de loading importado
 } from "lucide-react";
-import { Badge } from "@/src/components/ui/badge";
-import type { Product, ProductCount } from "@/src/lib/types";
-import { BarcodeScanner } from "@/src/components/features/barcode-scanner";
+import { Badge } from "@/components/ui/badge";
+import type { Product, ProductCount } from "@/lib/types";
+import { BarcodeScanner } from "@/components/features/barcode-scanner";
 
 interface ConferenceTabProps {
   isLoading: boolean; // <-- Nova propriedade

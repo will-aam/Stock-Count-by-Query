@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { prisma } from "@/src/lib/prisma";
+import { prisma } from "@/lib/prisma";
 import * as Papa from "papaparse";
 
 // O ID do usuário que é o "dono" do catálogo mestre.

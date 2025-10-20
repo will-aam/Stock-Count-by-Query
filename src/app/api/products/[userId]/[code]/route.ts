@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { prisma } from "@/src/lib/prisma";
+import { prisma } from "@/lib/prisma";
 
 // Define o ID do usuário que representa o Catálogo Mestre.
 // Toda consulta será feita nos produtos deste usuário.

@@ -5,10 +5,10 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/src/components/ui/card";
-import { Button } from "@/src/components/ui/button";
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { CloudUpload, Download, Package, ScanLine } from "lucide-react";
-import type { ProductCount } from "@/src/lib/types";
+import type { ProductCount } from "@/lib/types";
 
 // --- INTERFACE SIMPLIFICADA ---
 interface ExportTabProps {

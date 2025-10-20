@@ -1,26 +1,21 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/src/components/ui/tabs";
-import { useInventory } from "@/src/hooks/useInventory";
-import { AuthModal } from "@/src/components/shared/AuthModal";
-import { ConferenceTab } from "@/src/components/inventory/ConferenceTab";
-import { ExportTab } from "@/src/components/inventory/ExportTab";
-import { HistoryTab } from "@/src/components/inventory/HistoryTab";
-import { ClearDataModal } from "@/src/components/shared/clear-data-modal";
-import { Navigation } from "@/src/components/shared/navigation";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useInventory } from "@/hooks/useInventory";
+import { AuthModal } from "@/components/shared/AuthModal";
+import { ConferenceTab } from "@/components/inventory/ConferenceTab";
+import { ExportTab } from "@/components/inventory/ExportTab";
+import { HistoryTab } from "@/components/inventory/HistoryTab";
+import { ClearDataModal } from "@/components/shared/clear-data-modal";
+import { Navigation } from "@/components/shared/navigation";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/src/components/ui/select";
+} from "@/components/ui/select";
 import { Loader2 } from "lucide-react";
 
 export const dynamic = "force-dynamic";
@@ -90,7 +85,7 @@ export default function InventorySystem() {
 
           <TabsContent value="scan" className="space-y-6">
             <ConferenceTab
-              isLoading={inventory.isLoading} // <-- CORREÇÃO AQUI
+              isLoading={inventory.isLoading}
               countingMode={inventory.countingMode}
               setCountingMode={inventory.setCountingMode}
               scanInput={inventory.scanInput}

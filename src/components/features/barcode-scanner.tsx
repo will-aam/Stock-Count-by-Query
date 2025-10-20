@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useCallback } from "react";
 import { BrowserMultiFormatReader, NotFoundException } from "@zxing/library";
-import { Button } from "@/src/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 
 interface BarcodeScannerProps {
