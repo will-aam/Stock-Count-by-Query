@@ -5,10 +5,10 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+} from "@/src/components/ui/card";
+import { Button } from "@/src/components/ui/button";
+import { Input } from "@/src/components/ui/input";
+import { Label } from "@/src/components/ui/label";
 import {
   CloudUpload,
   Scan,
@@ -17,12 +17,14 @@ import {
   Camera,
   Plus,
   Trash2,
+  Loader2, // <-- Ícone de loading importado
 } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import type { Product, TempProduct, ProductCount } from "@/lib/types";
-import { BarcodeScanner } from "@/components/features/barcode-scanner";
+import { Badge } from "@/src/components/ui/badge";
+import type { Product, ProductCount } from "@/src/lib/types";
+import { BarcodeScanner } from "@/src/components/features/barcode-scanner";
 
 interface ConferenceTabProps {
+  isLoading: boolean; // <-- Nova propriedade
   countingMode: "loja" | "estoque";
   setCountingMode: (mode: "loja" | "estoque") => void;
   scanInput: string;
@@ -31,7 +33,7 @@ interface ConferenceTabProps {
   isCameraViewActive: boolean;
   setIsCameraViewActive: (show: boolean) => void;
   handleBarcodeScanned: (barcode: string) => void;
-  currentProduct: Product | TempProduct | null;
+  currentProduct: Product | null; // <-- Simplificado, não há mais TempProduct
   quantityInput: string;
   setQuantityInput: (value: string) => void;
   handleQuantityKeyPress: (e: React.KeyboardEvent<HTMLInputElement>) => void;
@@ -52,7 +54,7 @@ const ProductCountItem = ({
     <div className="flex-1">
       <p className="font-medium text-sm">{item.descricao}</p>
       <p className="text-xs text-gray-600 dark:text-gray-400">
-        Cód. Barras: {item.codigo_de_barras}| Sistema: {item.saldo_estoque}
+        Cód. Barras: {item.codigo_de_barras} | Sistema: {item.saldo_estoque}
       </p>
       <div className="flex items-center space-x-2 mt-1">
         <Badge variant="outline" className="text-xs">
@@ -84,6 +86,7 @@ const ProductCountItem = ({
 ProductCountItem.displayName = "ProductCountItem";
 
 export const ConferenceTab: React.FC<ConferenceTabProps> = ({
+  isLoading,
   countingMode,
   setCountingMode,
   scanInput,
@@ -149,74 +152,54 @@ export const ConferenceTab: React.FC<ConferenceTabProps> = ({
           ) : (
             <>
               <div className="space-y-2">
-                <Label htmlFor="barcode">Código de Barras</Label>
+                <Label htmlFor="barcode">Código de Barras ou Interno</Label>
                 <div className="flex space-x-2">
                   <Input
                     id="barcode"
                     value={scanInput}
                     onChange={(e) => setScanInput(e.target.value)}
-                    placeholder="Digite ou escaneie"
+                    placeholder="Digite ou escaneie o código"
                     className="flex-1 mobile-optimized"
                     onKeyPress={(e) => e.key === "Enter" && handleScan()}
+                    disabled={isLoading} // <-- ALTERAÇÃO AQUI
                   />
-                  <Button onClick={handleScan}>
-                    <Scan className="h-4 w-4" />
+                  {/* --- ALTERAÇÃO AQUI: Lógica de Loading no botão --- */}
+                  <Button
+                    onClick={handleScan}
+                    disabled={isLoading}
+                    id="scan-button"
+                  >
+                    {isLoading ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <Scan className="h-4 w-4" />
+                    )}
                   </Button>
                   <Button
                     onClick={() => setIsCameraViewActive(true)}
                     variant="outline"
+                    disabled={isLoading}
                   >
                     <Camera className="h-4 w-4" />
                   </Button>
                 </div>
               </div>
               {currentProduct && (
-                <div
-                  className={`p-4 border rounded-lg ${
-                    "isTemporary" in currentProduct &&
-                    currentProduct.isTemporary
-                      ? "bg-amber-50 dark:bg-amber-900/20 border-amber-200 dark:border-amber-800"
-                      : "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800"
-                  }`}
-                >
+                <div className="p-4 border rounded-lg bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800">
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
-                      <h3
-                        className={`font-semibold ${
-                          "isTemporary" in currentProduct &&
-                          currentProduct.isTemporary
-                            ? "text-amber-800 dark:text-amber-200"
-                            : "text-green-800 dark:text-green-200"
-                        }`}
-                      >
-                        {"isTemporary" in currentProduct &&
-                        currentProduct.isTemporary
-                          ? "Produto Temporário"
-                          : "Produto Encontrado"}
+                      <h3 className="font-semibold text-green-800 dark:text-green-200">
+                        Produto Encontrado
                       </h3>
-                      <p
-                        className={`text-sm ${
-                          "isTemporary" in currentProduct &&
-                          currentProduct.isTemporary
-                            ? "text-amber-700 dark:text-amber-300"
-                            : "text-green-700 dark:text-green-300"
-                        }`}
-                      >
+                      <p className="text-sm text-green-700 dark:text-green-300">
                         {currentProduct.descricao}
                       </p>
-                      <p
-                        className={`text-xs ${
-                          "isTemporary" in currentProduct &&
-                          currentProduct.isTemporary
-                            ? "text-amber-600 dark:text-amber-400"
-                            : "text-green-600 dark:text-green-400"
-                        }`}
-                      >
-                        Cód. Barras: {scanInput}
+                      <p className="text-xs text-green-600 dark:text-green-400">
+                        Cód. Interno: {currentProduct.codigo_produto}
                       </p>
                     </div>
                     <Badge variant="secondary" className="ml-2">
-                      Estoque: {currentProduct.saldo_estoque}
+                      Estoque: {currentProduct.saldo_estoque.toString()}
                     </Badge>
                   </div>
                 </div>
@@ -229,16 +212,14 @@ export const ConferenceTab: React.FC<ConferenceTabProps> = ({
                 <Input
                   id="quantity"
                   type="text"
+                  inputMode="decimal" // Melhora a experiência em teclados mobile
                   value={quantityInput}
                   onChange={(e) => setQuantityInput(e.target.value)}
                   onKeyPress={handleQuantityKeyPress}
                   placeholder="Qtd ou expressão (ex: 24+24)"
-                  min="0"
                   className="mobile-optimized font-mono"
+                  disabled={!currentProduct} // Só habilita se um produto for encontrado
                 />
-                <p className="text-xs text-gray-500 dark:text-gray-400 bold">
-                  Pressione Enter para calcular
-                </p>
               </div>
               <Button
                 onClick={handleAddCount}
@@ -246,8 +227,7 @@ export const ConferenceTab: React.FC<ConferenceTabProps> = ({
                 disabled={!currentProduct || !quantityInput}
               >
                 <Plus className="h-4 w-4 mr-2" />
-                Adicionar Contagem de{" "}
-                {countingMode === "loja" ? "Loja" : "Estoque"}
+                Adicionar Contagem
               </Button>
             </>
           )}
@@ -263,18 +243,20 @@ export const ConferenceTab: React.FC<ConferenceTabProps> = ({
               <div className="text-center py-8 text-gray-500 dark:text-gray-400">
                 <Package className="h-12 w-12 mx-auto mb-4 opacity-50" />
                 <p className="font-medium">Nenhum produto contado ainda</p>
-                <p className="text-sm">
-                  Escaneie um código de barras para começar
-                </p>
+                <p className="text-sm">Escaneie um código para começar</p>
               </div>
             ) : (
-              productCounts.map((item) => (
-                <ProductCountItem
-                  key={item.id}
-                  item={item}
-                  onRemove={handleRemoveCount}
-                />
-              ))
+              [...productCounts].reverse().map(
+                (
+                  item // Mostra o mais recente primeiro
+                ) => (
+                  <ProductCountItem
+                    key={item.id}
+                    item={item}
+                    onRemove={handleRemoveCount}
+                  />
+                )
+              )
             )}
           </div>
         </CardContent>

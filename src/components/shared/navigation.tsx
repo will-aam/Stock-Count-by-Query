@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { ThemeToggleButton } from "@/components/theme/theme-toggle-button";
+import { ThemeToggleButton } from "@/src/components/theme/theme-toggle-button";
 import { Trash2 } from "lucide-react";
 import { Button } from "../ui/button";
 

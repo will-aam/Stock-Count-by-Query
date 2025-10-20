@@ -1,15 +1,20 @@
 "use client";
 
 import { useEffect } from "react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/src/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/src/components/ui/card";
 import {
   Download,
   History as HistoryIcon,
   FileText,
   Trash2, // Ícone da lixeira importado
 } from "lucide-react";
-import { useInventory } from "@/hooks/useInventory";
+import { useInventory } from "@/src/hooks/useInventory";
 
 interface HistoryTabProps {
   userId: number | null;

@@ -1,0 +1,56 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Usuario {
+  id               Int              @id @default(autoincrement())
+  email            String           @unique
+  senha_hash       String
+  created_at       DateTime         @default(now())
+  produtos         Produto[]
+  codigos_barras   CodigoBarras[]
+  contagens_salvas ContagemSalva[]
+
+  @@map("usuarios")
+}
+
+model Produto {
+  id             Int            @id @default(autoincrement())
+  codigo_produto String
+  descricao      String
+  created_at     DateTime       @default(now())
+  usuario_id     Int
+  usuario        Usuario        @relation(fields: [usuario_id], references: [id])
+  codigos_barras CodigoBarras[]
+
+  @@unique([codigo_produto, usuario_id])
+  @@map("produtos")
+}
+
+model CodigoBarras {
+  codigo_de_barras String
+  produto_id       Int
+  created_at       DateTime @default(now())
+  usuario_id       Int
+  usuario          Usuario  @relation(fields: [usuario_id], references: [id])
+  produto          Produto  @relation(fields: [produto_id], references: [id], onDelete: Cascade)
+
+  @@id([codigo_de_barras, usuario_id])
+  @@map("codigos_de_barras")
+}
+
+model ContagemSalva {
+  id           Int      @id @default(autoincrement())
+  nome_arquivo String
+  conteudo_csv String
+  created_at   DateTime @default(now())
+  usuario_id   Int
+  usuario      Usuario  @relation(fields: [usuario_id], references: [id], onDelete: Cascade)
+
+  @@map("contagens_salvas")
+}
