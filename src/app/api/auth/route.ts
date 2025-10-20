@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+import { prisma } from "@/src/lib/prisma";
 
 // Adicione as novas senhas aqui
 const hardcodedPasswords: Record<string, number> = {
