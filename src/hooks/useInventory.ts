@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { toast } from "@/hooks/use-toast";
-import * as Papa from "paparse";
+import * as Papa from "papaparse";
 import type { Product, ProductCount } from "@/lib/types";
 
 const loadCountsFromLocalStorage = (userId: number | null): ProductCount[] => {
