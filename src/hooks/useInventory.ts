@@ -1,4 +1,4 @@
-"use client";
+// src/hooks/useInventory.ts
 
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { toast } from "@/hooks/use-toast";
@@ -21,6 +21,7 @@ const loadCountsFromLocalStorage = (userId: number | null): ProductCount[] => {
 export const useInventory = ({ userId }: { userId: number | null }) => {
   const [scanInput, setScanInput] = useState("");
   const [quantityInput, setQuantityInput] = useState("");
+  const [expiryDate, setExpiryDate] = useState("");
   const [currentProduct, setCurrentProduct] = useState<Product | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [countingMode, setCountingMode] = useState<"loja" | "estoque">("loja");
@@ -125,7 +126,9 @@ export const useInventory = ({ userId }: { userId: number | null }) => {
 
     setProductCounts((prevCounts) => {
       const existingIndex = prevCounts.findIndex(
-        (item) => item.codigo_produto === currentProduct.codigo_produto
+        (item) =>
+          item.codigo_produto === currentProduct.codigo_produto &&
+          item.data_validade === (expiryDate || null) // <-- MODIFICADO
       );
       if (existingIndex >= 0) {
         const updatedCounts = [...prevCounts];
@@ -143,6 +146,7 @@ export const useInventory = ({ userId }: { userId: number | null }) => {
           descricao: currentProduct.descricao,
           quant_loja: countingMode === "loja" ? finalQuantity : 0,
           quant_estoque: countingMode === "estoque" ? finalQuantity : 0,
+          data_validade: expiryDate || null,
           local_estoque: "",
           data_hora: new Date().toISOString(),
         };
@@ -153,11 +157,13 @@ export const useInventory = ({ userId }: { userId: number | null }) => {
     toast({ title: "Contagem adicionada!" });
     setScanInput("");
     setQuantityInput("");
+    setExpiryDate("");
     setCurrentProduct(null);
   }, [
     currentProduct,
     quantityInput,
     countingMode,
+    expiryDate,
     scanInput,
     calculateExpression,
   ]);
@@ -256,6 +262,7 @@ export const useInventory = ({ userId }: { userId: number | null }) => {
       descricao: item.descricao,
       quant_loja: item.quant_loja,
       quant_estoque: item.quant_estoque,
+      data_validade: item.data_validade || "",
     }));
   }, [productCounts]);
 
@@ -333,6 +340,8 @@ export const useInventory = ({ userId }: { userId: number | null }) => {
     setCountingMode,
     productCounts,
     showClearDataModal,
+    expiryDate,
+    setExpiryDate,
     setShowClearDataModal,
     isCameraViewActive,
     setIsCameraViewActive,

@@ -1,3 +1,5 @@
+// src/app/page.tsx
+
 "use client";
 
 import { useState, useEffect } from "react";
@@ -97,6 +99,8 @@ export default function InventorySystem() {
               currentProduct={inventory.currentProduct}
               quantityInput={inventory.quantityInput}
               setQuantityInput={inventory.setQuantityInput}
+              expiryDate={inventory.expiryDate} // <-- ADICIONADO
+              setExpiryDate={inventory.setExpiryDate} // <-- ADICIONADO
               handleQuantityKeyPress={inventory.handleQuantityKeyPress}
               handleAddCount={inventory.handleAddCount}
               productCounts={inventory.productCounts}

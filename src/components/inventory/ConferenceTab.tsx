@@ -1,3 +1,5 @@
+// src/components/inventory/ConferenceTab.tsx
+
 import type React from "react";
 import {
   Card,
@@ -36,6 +38,8 @@ interface ConferenceTabProps {
   currentProduct: Product | null;
   quantityInput: string;
   setQuantityInput: (value: string) => void;
+  expiryDate: string; // <-- ADICIONE ESTA LINHA
+  setExpiryDate: (value: string) => void; // <-- ADICIONE ESTA LINHA
   handleQuantityKeyPress: (e: React.KeyboardEvent<HTMLInputElement>) => void;
   handleAddCount: () => void;
   productCounts: ProductCount[];
@@ -64,6 +68,19 @@ const ProductCountItem = ({
         <Badge variant="outline" className="text-xs">
           Estoque: {item.quant_estoque}
         </Badge>
+        {/* --- BLOCO MODIFICADO/ADICIONADO --- */}
+        {item.data_validade && (
+          <Badge variant="secondary" className="text-xs">
+            Val:{" "}
+            {new Date(item.data_validade + "T00:00:00").toLocaleDateString(
+              "pt-BR",
+              {
+                timeZone: "UTC",
+              }
+            )}
+          </Badge>
+        )}
+        {/* --- FIM DO BLOCO --- */}
       </div>
     </div>
     <Button variant="outline" size="sm" onClick={() => onRemove(item.id)}>
@@ -86,6 +103,8 @@ export const ConferenceTab: React.FC<ConferenceTabProps> = ({
   currentProduct,
   quantityInput,
   setQuantityInput,
+  expiryDate, // <-- ADICIONADO
+  setExpiryDate, // <-- ADICIONADO
   handleQuantityKeyPress,
   handleAddCount,
   productCounts,
@@ -206,6 +225,20 @@ export const ConferenceTab: React.FC<ConferenceTabProps> = ({
                   disabled={!currentProduct}
                 />
               </div>
+              {/* --- BLOCO NOVO PARA DATA DE VALIDADE --- */}
+              <div className="space-y-2">
+                <Label htmlFor="expiry-date">Data de Validade (Opcional)</Label>
+                <Input
+                  id="expiry-date"
+                  type="date"
+                  value={expiryDate}
+                  onChange={(e) => setExpiryDate(e.target.value)}
+                  onKeyPress={handleQuantityKeyPress}
+                  className="mobile-optimized"
+                  disabled={!currentProduct}
+                />
+              </div>
+              {/* --- FIM DO BLOCO --- */}
               <Button
                 onClick={handleAddCount}
                 className="w-full mobile-button"

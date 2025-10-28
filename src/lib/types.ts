@@ -4,7 +4,6 @@ export interface Product {
   id: number;
   codigo_produto: string;
   descricao: string;
-  // saldo_estoque foi removido daqui
 }
 
 export interface ProductCount {
@@ -14,9 +13,7 @@ export interface ProductCount {
   descricao: string;
   quant_loja: number;
   quant_estoque: number;
-  // saldo_estoque e total foram removidos daqui
+  data_validade?: string | null;
   local_estoque: string;
   data_hora: string;
 }
-
-// O resto dos tipos pode ser removido, pois não estão a ser usados no novo fluxo.
