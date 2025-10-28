@@ -1,3 +1,5 @@
+// prisma/schema.prisma
+
 generator client {
   provider = "prisma-client-js"
 }
@@ -15,6 +17,7 @@ model Usuario {
   produtos         Produto[]
   codigos_barras   CodigoBarras[]
   contagens_salvas ContagemSalva[]
+  contagens        Contagem[] // Relação com Contagem
 
   @@map("usuarios")
 }
@@ -27,6 +30,7 @@ model Produto {
   usuario_id     Int
   usuario        Usuario        @relation(fields: [usuario_id], references: [id])
   codigos_barras CodigoBarras[]
+  itens_contados ItemContado[] // Relação com ItemContado
 
   @@unique([codigo_produto, usuario_id])
   @@map("produtos")
@@ -53,4 +57,35 @@ model ContagemSalva {
   usuario      Usuario  @relation(fields: [usuario_id], references: [id], onDelete: Cascade)
 
   @@map("contagens_salvas")
+}
+
+// --- NOVOS MODELOS ADICIONADOS ABAIXO ---
+
+model Contagem {
+  id          Int           @id @default(autoincrement())
+  usuario_id  Int
+  usuario     Usuario       @relation(fields: [usuario_id], references: [id], onDelete: Cascade)
+  created_at  DateTime      @default(now())
+  finished_at DateTime?
+  status      String        @default("em_andamento") // Ex: em_andamento, finalizada
+  itens       ItemContado[]
+
+  @@map("contagens")
+}
+
+model ItemContado {
+  id            Int      @id @default(autoincrement())
+  contagem_id   Int
+  contagem      Contagem @relation(fields: [contagem_id], references: [id], onDelete: Cascade)
+  produto_id    Int
+  produto       Produto  @relation(fields: [produto_id], references: [id], onDelete: Cascade)
+  quant_loja    Float    @default(0)
+  quant_estoque Float    @default(0)
+  data_validade DateTime? // <-- CAMPO ADICIONADO (DateTime para datas)
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+
+  // Índice único para evitar duplicidade do mesmo produto/validade na mesma contagem
+  @@unique([contagem_id, produto_id, data_validade])
+  @@map("itens_contados")
 }
