@@ -227,7 +227,9 @@ export const ConferenceTab: React.FC<ConferenceTabProps> = ({
               </div>
               {/* --- BLOCO NOVO PARA DATA DE VALIDADE --- */}
               <div className="space-y-2">
-                <Label htmlFor="expiry-date">Data de Validade (Opcional)</Label>
+                <Label htmlFor="expiry-date">
+                  Data de Validade (Obrigatória)
+                </Label>
                 <Input
                   id="expiry-date"
                   type="date"
@@ -236,6 +238,7 @@ export const ConferenceTab: React.FC<ConferenceTabProps> = ({
                   onKeyPress={handleQuantityKeyPress}
                   className="mobile-optimized"
                   disabled={!currentProduct}
+                  required
                 />
               </div>
               {/* --- FIM DO BLOCO --- */}
